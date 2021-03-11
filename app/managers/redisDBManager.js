@@ -60,8 +60,12 @@ module.exports = {
      * @return {Promise}
      */
     updateId: async function updateIdToDb(id,name) {
-        await client.set(id, name);
-        return await module.exports.getById(id);
+        const isExist = await client.get(id);
+        if (isExist) {
+            await client.set(id, name);
+            return await module.exports.getById(id);
+        }
+        return 'Client is not existed';
     },
 
     /**
