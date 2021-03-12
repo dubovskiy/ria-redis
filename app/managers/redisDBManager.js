@@ -17,6 +17,16 @@ client.on("error", function(error) {
   client.del = util.promisify(client.del);
   client.incr = util.promisify(client.incr);
 
+
+  (async function(){
+    const max = await client.get('max');
+    if (!max) {
+        await client.set('max', '0');
+    }
+  }())
+
+
+
 module.exports = {
     /**
      * Get all records from memory DB
