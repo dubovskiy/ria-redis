@@ -18,15 +18,6 @@ client.on("error", function(error) {
   client.incr = util.promisify(client.incr);
 
 
-  (async function(){
-    const max = await client.get('max');
-    if (!max) {
-        await client.set('max', '0');
-    }
-  }())
-
-
-
 module.exports = {
     /**
      * Get all records from memory DB
@@ -58,7 +49,10 @@ module.exports = {
      * @return {Promise}
      */
     setNewId: async function setNewIdToDb(name) {
-        const id = await client.get('max');
+        const id = await client.get('max') || 0;
+	if (!id) {
+	    await client.set('max', '0');
+	}
         await client.set(id, name);
         await client.incr('max');
         return await module.exports.getById(id);
